@@ -53,5 +53,49 @@ const resolvers = {
             // Return the token and the user data
             return { token, user };
         },
-    }
+    },
+    Mutation: {
+        // Define the resolver for the "addUser" mutation
+        addUser: async (parent, {username, email, password }) => {
+            const user = await User.create({ username, email, password });
+            const token = signToken(user);
+            return { token, user };
+        },
+
+        // Define the resolver for the "saveBook" mutation
+        saveBook: async (parent, {input}, context) => {
+            // if the user is authenticated
+            if (context.user) {
+                // Update the user's savedBooks field with the new book
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    {$push: { savedBooks: input} },
+                    { new: true}
+                ).populate('savedBooks');
+
+                return updatedUser;
+            }
+            // If the user is not authenticated, throw an AuthenticationError
+            throw new AuthenticationError('You need to be logged in to save books');
+
+        },
+        // Define the resolver for the "removeBook" mutation
+        removeBook: async (parent, {bookId}, context) => {
+            // If the user is authenticated
+            if (context.user) {
+                // Remove the book from the user's savedBooks field
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $pull: { savedBooks: { bookId } } },
+                    { new: true }
+                ).populate('savedBooks');
+
+                return updatedUser;
+            }
+            // If the user is not authenticated, throw an AuthenticationError
+            throw new AuthenticationError('You need to be logged in to remove books');
+        },
+    },
+    
+
 };
