@@ -1,19 +1,26 @@
 import './App.css';
-import { ApolloProvider } from '@apollo/client';
-import { BrowserRouter as Router } from 'react-router-dom';
-
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import Navbar from './components/Navbar';
-import { client } from '@apollo/client';
-import { Routes } from './main.jsx';
+import SavedBooks from './pages/SavedBooks';
+import SearchBooks from './pages/SearchBooks';
 
+const client = new ApolloClient({
+  uri: 'http://localhost:3001/graphql', // Replace with your GraphQL server's URI
+  cache: new InMemoryCache(),
+});
 
 function App() {
   return (
     <ApolloProvider client={client}>
-      <Router>
+     
         <Navbar />
-        <Routes />
-      </Router>
+        <Routes>
+          <Route path="*" element={<SearchBooks />} />
+          <Route path="/saved" element={<SavedBooks />} />
+        </Routes>
+      
     </ApolloProvider>
   );
 }
