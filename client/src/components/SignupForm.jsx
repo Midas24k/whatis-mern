@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { useMutation } from '@apollo/client';
 
-import { createUser } from '../utils/API';
+import { ADD_USER } from '../graphql/mutations'; // Import ADD_USER mutation
 import Auth from '../utils/auth';
 
 const SignupForm = () => {
@@ -11,6 +12,9 @@ const SignupForm = () => {
   const [validated] = useState(false);
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
+
+  // Use useMutation hook to execute ADD_USER mutation
+  const [addUserMutation] = useMutation(ADD_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -28,14 +32,11 @@ const SignupForm = () => {
     }
 
     try {
-      const response = await createUser(userFormData);
+      const { data } = await addUserMutation({
+        variables: { ...userFormData }, // Pass userFormData as variables to the mutation
+      });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const { token, user } = await response.json();
-      console.log(user);
+      const { token, user } = data.addUser; // Extract token and user data from the mutation result
       Auth.login(token);
     } catch (err) {
       console.error(err);
