@@ -71,6 +71,7 @@ const SearchBooks = () => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
+      alert('You need to be logged in to save a book!');
       return false;
     }
 

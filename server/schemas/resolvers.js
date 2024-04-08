@@ -26,6 +26,9 @@ const resolvers = {
             // If the user is not authenticated, throw an AuthenticationError
             throw new AuthenticationError('Not logged in');
         },
+        users: async (parent, args, context) => {
+            return User.find().populate('savedBooks');
+        }
     },
     // Define the resolvers for the Mutation type
     Mutation: {
@@ -53,8 +56,8 @@ const resolvers = {
             // Return the token and the user data
             return { token, user };
         },
-    },
-    Mutation: {
+    
+   
         // Define the resolver for the "addUser" mutation
         addUser: async (parent, {username, email, password }) => {
             const user = await User.create({ username, email, password });
