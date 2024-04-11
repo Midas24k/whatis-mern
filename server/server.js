@@ -36,11 +36,11 @@ const startApolloServer = async () => {
   // If the application is running in a production environment...
   if (process.env.NODE_ENV === 'production') {
     // Serve static files from the client/build directory
-    app.use(express.static(path.join(__dirname, '../client/build')));
+    app.use(express.static(path.join(__dirname, '../client/dist')));
 
     // Respond to any GET request with the index.html file from the client/build directory
     app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../client/build/index.html'));
+      res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
   }
 
